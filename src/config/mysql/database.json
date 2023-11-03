@@ -1,0 +1,47 @@
+[
+  {
+    "name": "resource",
+    "data": {
+      "id": "INT",
+      "name": "CHAR(255)",
+      "code": "CHAR(255)",
+      "thumbnail": "CHAR(255)",
+      "hierarchy": "INT",
+      "children": "JSON",
+      "parent": "JSON",
+      "science_id": "INT",
+      "subtype": "CHAR(255)",
+      "create_time": "INT",
+      "update_time": "INT"
+    },
+    "primaryKey": "id"
+  },
+  {
+    "name": "science",
+    "data": {
+      "id": "INT",
+      "name": "CHAR(255)",
+      "code": "CHAR(255)",
+      "thumbnail": "CHAR(255)",
+      "children": "JSON",
+      "subtype": "CHAR(255)",
+      "create_time": "INT",
+      "update_time": "INT"
+    },
+    "primaryKey": "id"
+  },
+  {
+    "name": "recipe",
+    "data": {
+      "id": "INT",
+      "name": "CHAR(255)",
+      "code": "CHAR(255)",
+      "thumbnail": "CHAR(255)",
+      "ingredients": "JSON",
+      "analysis": "CHAR(255)",
+      "create_time": "INT",
+      "update_time": "INT"
+    },
+    "primaryKey": "id"
+  }
+]
