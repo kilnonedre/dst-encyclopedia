@@ -34,7 +34,7 @@ const ResourceModal = (props: types.ConfigProps) => {
     setName(props.resource?.name ?? '')
     setCode(props.resource?.code ?? '')
     setIsCreate(!props.resource)
-  }, [props && props.isOpen])
+  }, [props.isOpen])
 
   const getMod = async () => {
     const response = await GetMod()
