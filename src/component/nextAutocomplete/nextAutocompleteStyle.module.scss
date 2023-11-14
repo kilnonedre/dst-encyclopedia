@@ -1,0 +1,9 @@
+.autocomplete {
+  width: var(--width);
+  :global(.group) {
+    margin-top: 0;
+  }
+  label {
+    display: none;
+  }
+}

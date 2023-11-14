@@ -1,15 +1,36 @@
 [
   {
-    "name": "resource",
+    "name": "resources",
     "data": {
       "id": "INT",
       "name": "CHAR(255)",
       "code": "CHAR(255)",
       "thumbnail": "CHAR(255)",
-      "hierarchy": "INT",
+      "mod_id": "INT",
+      "create_time": "INT",
+      "update_time": "INT"
+    },
+    "primaryKey": "id"
+  },
+  {
+    "name": "mods",
+    "data": {
+      "id": "INT",
+      "name": "CHAR(255)",
+      "thumbnail": "CHAR(255)",
+      "create_time": "INT",
+      "update_time": "INT"
+    },
+    "primaryKey": "id"
+  },
+  {
+    "name": "sciences",
+    "data": {
+      "id": "INT",
+      "name": "CHAR(255)",
+      "code": "CHAR(255)",
+      "thumbnail": "CHAR(255)",
       "children": "JSON",
-      "parent": "JSON",
-      "science_id": "INT",
       "subtype": "CHAR(255)",
       "create_time": "INT",
       "update_time": "INT"
@@ -17,21 +38,7 @@
     "primaryKey": "id"
   },
   {
-    "name": "science",
-    "data": {
-      "id": "INT",
-      "name": "CHAR(255)",
-      "code": "CHAR(255)",
-      "thumbnail": "CHAR(255)",
-      "children": "JSON",
-      "subtype": "CHAR(255)",
-      "create_time": "INT",
-      "update_time": "INT"
-    },
-    "primaryKey": "id"
-  },
-  {
-    "name": "recipe",
+    "name": "recipes",
     "data": {
       "id": "INT",
       "name": "CHAR(255)",
