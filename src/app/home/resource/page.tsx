@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import styles from './resourceStyle.module.scss'
-import types from './resourceType.d'
+import types from './resourceType'
 import {
   Button,
   Table,
@@ -40,6 +40,7 @@ const Resource = () => {
   const [page, setPage] = useState(1)
   const [pages, setPages] = useState(1)
   const [modList, setModList] = useState<Array<types.ConfigMod>>([])
+  const [mode, setMode] = useState<types.ConfigMode>('edit')
 
   useEffect(() => {
     setPage(1)
@@ -47,6 +48,10 @@ const Resource = () => {
   }, [name, mod])
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
+
+  useEffect(() => {
+    !isOpen && setMode('edit')
+  }, [isOpen])
 
   const renderResource = async (p?: number) => {
     getMod()
@@ -86,7 +91,7 @@ const Resource = () => {
       case 'action':
         return (
           <div className={styles['action']}>
-            <Icon font={''} size="1.1rem" />
+            <Icon font={''} size="1.1rem" onPress={() => generate(resource)} />
             <Icon font={''} size="1.1rem" onPress={() => edit(resource)} />
             <Icon
               font={''}
@@ -100,6 +105,12 @@ const Resource = () => {
         const check: never = columnKey
         return check
     }
+  }
+
+  const generate = (resource: types.ConfigResource) => {
+    setMode('generate')
+    setResource(resource)
+    onOpen()
   }
 
   const reRender = () => {
@@ -144,7 +155,6 @@ const Resource = () => {
       return
     }
     const modList = data.map((mod: resourceTypes.ConfigResource) => {
-      console.log(typeof mod.id)
       return {
         label: mod.name,
         value: mod.id,
@@ -158,10 +168,12 @@ const Resource = () => {
       <div className={styles['resource-header']}>
         <Input
           className={styles['resource-header-input']}
+          variant="bordered"
           size="sm"
           isClearable
           type="text"
-          placeholder="请输入科雷ID"
+          radius="md"
+          placeholder="请输入词条名称"
           value={name}
           onValueChange={setName}
         />
@@ -184,6 +196,7 @@ const Resource = () => {
       </div>
       <ResourceModal
         title="创建词条"
+        mode={mode}
         resource={resource}
         isOpen={isOpen}
         onOpen={onOpen}

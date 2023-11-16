@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styles from './resourceModalStyle.module.scss'
 import types from './resourceModalType.d'
 import resourceTypes from '@/app/api/resources/resourceType.d'
+import { ConfigMode } from '@/app/home/resource/resourceType'
 import {
   Modal,
   ModalContent,
@@ -10,6 +11,8 @@ import {
   ModalFooter,
   Button,
   Input,
+  Chip,
+  Snippet,
 } from '@nextui-org/react'
 import NextAutocomplete from '../nextAutocomplete'
 import { GetMod, CreateResource, UpdateResource } from '@/api'
@@ -27,14 +30,45 @@ const ResourceModal = (props: types.ConfigProps) => {
   const [modErrMsg, setModErrMsg] = useState('')
   const [isEmpty, setIsEmpty] = useState(false)
   const [isCreate, setIsCreate] = useState(true)
+  const [mode, setMode] = useState<ConfigMode>('edit')
+  const [number, setNumber] = useState('')
+  const [numberErrMsg, setNumberErrMsg] = useState('')
+  const [generate, setGenerate] = useState('')
 
   useEffect(() => {
-    props.isOpen && getMod()
-    setId(props.resource?.id ?? null)
-    setName(props.resource?.name ?? '')
-    setCode(props.resource?.code ?? '')
-    setIsCreate(!props.resource)
+    if (props.isOpen) {
+      setMode(props.mode)
+      setName(props.resource?.name ?? '')
+      setCode(props.resource?.code ?? '')
+      if (props.mode === 'edit') {
+        getMod()
+        setId(props.resource?.id ?? null)
+        setIsCreate(!props.resource)
+      } else {
+        setNumber('')
+      }
+    } else {
+      reset()
+    }
   }, [props.isOpen])
+
+  const reset = () => {
+    setModList([])
+    setId(null)
+    setName('')
+    setNameErrMsg('')
+    setCode('')
+    setCodeErrMsg('')
+    setModSelect(null)
+    setModInput('')
+    setModErrMsg('')
+    setIsEmpty(false)
+    setIsCreate(true)
+    setMode('edit')
+    setNumber('')
+    setNumberErrMsg('')
+    setGenerate('')
+  }
 
   const getMod = async () => {
     const response = await GetMod()
@@ -50,7 +84,6 @@ const ResourceModal = (props: types.ConfigProps) => {
     } else {
       setIsEmpty(false)
       modList = data.map((mod: resourceTypes.ConfigResource) => {
-        console.log(typeof mod.id)
         return {
           label: mod.name,
           value: mod.id,
@@ -121,67 +154,125 @@ const ResourceModal = (props: types.ConfigProps) => {
     setCode(e)
   }
 
+  const generateCode = () => {
+    if (!number.trim()) {
+      setNumberErrMsg('请输入数量')
+      return
+    }
+    const num = Number(number)
+    if (isNaN(num)) {
+      setNumberErrMsg('请输入数字')
+      return
+    }
+    const gen = `c_give(${code}, ${num})`
+    setGenerate(gen)
+  }
+
+  const changeNumber = (e: string) => {
+    numberErrMsg && setNumberErrMsg('')
+    setNumber(e)
+  }
+
   return (
     <Modal isOpen={props.isOpen} onOpenChange={props.onOpenChange}>
       <ModalContent>
         {onClose => (
           <>
-            <ModalHeader className="flex flex-col gap-1">
-              {props.title}
-            </ModalHeader>
-            <ModalBody>
-              <Input
-                size="sm"
-                className={styles['input']}
-                isClearable
-                type="text"
-                variant="bordered"
-                placeholder="请输入词条名称"
-                isInvalid={!!nameErrMsg}
-                errorMessage={nameErrMsg}
-                value={name}
-                onValueChange={changeName}
-              />
-              <Input
-                size="sm"
-                className={styles['input']}
-                isClearable
-                type="text"
-                variant="bordered"
-                placeholder="请输入词条代码"
-                isInvalid={!!codeErrMsg}
-                errorMessage={codeErrMsg}
-                value={code}
-                onValueChange={changeCode}
-              />
-              <NextAutocomplete
-                placeholder="请选择词条分类"
-                defaultItems={modList}
-                errorMessage={modErrMsg}
-                defaultSelectedKey={
-                  props.resource?.mod_id ?? (isEmpty ? '默认' : 1)
-                }
-                onSelectionChange={onSelectionChange}
-                onInputChange={onInputChange}
-              />
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                size="sm"
-                color="danger"
-                variant="light"
-                onPress={onClose}
-              >
-                取消
-              </Button>
-              <Button
-                size="sm"
-                color="primary"
-                onPress={() => onSubmit(onClose)}
-              >
-                创建
-              </Button>
-            </ModalFooter>
+            {mode === 'edit' ? (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  {props.title}
+                </ModalHeader>
+                <ModalBody>
+                  <Input
+                    size="sm"
+                    radius="md"
+                    className={styles['input']}
+                    isClearable
+                    type="text"
+                    variant="bordered"
+                    placeholder="请输入词条名称"
+                    isInvalid={!!nameErrMsg}
+                    errorMessage={nameErrMsg}
+                    value={name}
+                    onValueChange={changeName}
+                  />
+                  <Input
+                    size="sm"
+                    radius="md"
+                    className={styles['input']}
+                    isClearable
+                    type="text"
+                    variant="bordered"
+                    placeholder="请输入词条代码"
+                    isInvalid={!!codeErrMsg}
+                    errorMessage={codeErrMsg}
+                    value={code}
+                    onValueChange={changeCode}
+                  />
+                  <NextAutocomplete
+                    placeholder="请选择词条分类"
+                    defaultItems={modList}
+                    errorMessage={modErrMsg}
+                    defaultSelectedKey={
+                      props.resource?.mod_id ?? (isEmpty ? '默认' : 1)
+                    }
+                    onSelectionChange={onSelectionChange}
+                    onInputChange={onInputChange}
+                  />
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    size="sm"
+                    color="danger"
+                    variant="light"
+                    onPress={onClose}
+                  >
+                    取消
+                  </Button>
+                  <Button
+                    size="sm"
+                    color="primary"
+                    onPress={() => onSubmit(onClose)}
+                  >
+                    {isCreate ? '创建' : '修改'}
+                  </Button>
+                </ModalFooter>
+              </>
+            ) : (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  代码生成
+                </ModalHeader>
+                <ModalBody>
+                  <Chip color="warning" variant="dot">
+                    {name + code}
+                  </Chip>
+                  <Input
+                    size="sm"
+                    radius="md"
+                    className={styles['input']}
+                    isClearable
+                    type="text"
+                    variant="bordered"
+                    placeholder="请输入数量"
+                    isInvalid={!!numberErrMsg}
+                    errorMessage={numberErrMsg}
+                    value={number}
+                    onValueChange={changeNumber}
+                  />
+                  <Button color="primary" size="sm" onPress={generateCode}>
+                    生成
+                  </Button>
+                  {generate && (
+                    <Snippet variant="bordered" size="sm">
+                      {generate}
+                    </Snippet>
+                  )}
+                </ModalBody>
+                <ModalFooter></ModalFooter>
+              </>
+            )}
           </>
         )}
       </ModalContent>

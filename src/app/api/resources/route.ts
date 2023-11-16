@@ -8,7 +8,7 @@ import dbQuery from '@/util/mysql'
 const getFun = async ({ name, mod, page }: types.ConfigGetParams) => {
   const sql = `SELECT resources.*, mods.name AS mod_name FROM resources JOIN mods ON resources.mod_id = mods.id WHERE resources.name LIKE "%${name}%" ${
     mod ? 'AND resources.mod_id = ?' : ''
-  }`
+  } ORDER BY id`
   const resourceList = (await dbQuery(sql, [
     [[mod]],
   ])) as Array<types.ConfigResource>

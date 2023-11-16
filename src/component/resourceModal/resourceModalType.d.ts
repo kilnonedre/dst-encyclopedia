@@ -1,6 +1,7 @@
-import { ConfigResource } from '@/app/resource/resourceType.d'
+import { ConfigResource, ConfigMode } from '@/app/home/resource/resourceType'
 
 interface ConfigProps {
+  mode: ConfigMode
   isOpen: boolean
   onOpen: function
   onOpenChange: function

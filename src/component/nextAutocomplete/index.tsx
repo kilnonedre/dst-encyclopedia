@@ -8,6 +8,7 @@ const NextAutocomplete = (props: types.ConfigProps) => {
   return (
     <Autocomplete
       className={styles['autocomplete']}
+      size="md"
       style={{ '--width': props.width ?? 'auto' } as CSSProperties}
       label={props.label ?? 'autocomplete demo'}
       variant={props.variant ?? 'bordered'}
