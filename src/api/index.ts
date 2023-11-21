@@ -1,9 +1,21 @@
 import { Get, Post, Put, Delete } from '@/util/http'
 import resourceTypes from '@/app/api/resources/resourceType.d'
+import registerTypes from '@/app/api/users/register/registerType.d'
+import loginTypes from '@/app/api/users/login/loginType.d'
 
 const splicePath = (path: string) => {
   return '/api' + path
 }
+
+/**用户 */
+
+// 创建用户
+export const Register = (params: registerTypes.ConfigPostParams) =>
+  Post(splicePath('/users/register'), params)
+
+// 登录
+export const Login = (params: loginTypes.ConfigPostParams) =>
+  Post(splicePath('/users/login'), params)
 
 /**数据库 */
 

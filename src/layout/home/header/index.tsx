@@ -4,6 +4,7 @@ import React from 'react'
 import styles from './headerStyle.module.scss'
 import { User } from '@nextui-org/react'
 import { useRouter } from 'next/navigation'
+import img from '@/asset/avatar/avatar.png'
 
 const Header = () => {
   const router = useRouter()
@@ -19,7 +20,8 @@ const Header = () => {
         name="Jane Doe"
         description="Product Designer"
         avatarProps={{
-          src: 'https://i.pravatar.cc/150?u=a04258114e29026702d',
+          src: img.src,
+          isBordered: true,
         }}
       />
       <div className={styles['header-logout']} onClick={logout}>

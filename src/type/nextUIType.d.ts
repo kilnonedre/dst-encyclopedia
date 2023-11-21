@@ -1,3 +1,11 @@
 type ConfigVariant = 'flat' | 'bordered' | 'faded' | 'underlined'
 
-export { ConfigVariant }
+type ConfigColor =
+  | 'default'
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'warning'
+  | 'danger'
+
+export { ConfigVariant, ConfigColor }

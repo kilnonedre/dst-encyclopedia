@@ -18,6 +18,21 @@ import NextAutocomplete from '../nextAutocomplete'
 import { GetMod, CreateResource, UpdateResource } from '@/api'
 import { toast } from 'sonner'
 
+// const subtypeList = [
+//   {
+//     label: '全局',
+//     value: 'overall',
+//   },
+//   {
+//     label: '全局',
+//     value: 'overall',
+//   },
+//     {
+//     label: '全局',
+//     value: 'overall',
+//   },
+// ]
+
 const ResourceModal = (props: types.ConfigProps) => {
   const [modList, setModList] = useState<Array<types.ConfigMod>>([])
   const [id, setId] = useState<number | null>(null)
@@ -114,7 +129,7 @@ const ResourceModal = (props: types.ConfigProps) => {
       return
     }
     if (!modInput.trim() && !modSelect) {
-      setModErrMsg('请输入词条分类')
+      setModErrMsg('请输入所属模组')
       return
     }
     let mod = modSelect ?? modInput
@@ -154,7 +169,7 @@ const ResourceModal = (props: types.ConfigProps) => {
     setCode(e)
   }
 
-  const generateCode = () => {
+  const generateCode = (mark: 'create' | 'remove') => {
     if (!number.trim()) {
       setNumberErrMsg('请输入数量')
       return
@@ -164,13 +179,26 @@ const ResourceModal = (props: types.ConfigProps) => {
       setNumberErrMsg('请输入数字')
       return
     }
-    const gen = `c_give(${code}, ${num})`
+    const gen = `${mark} | ${code} | ${num}`
     setGenerate(gen)
   }
 
   const changeNumber = (e: string) => {
     numberErrMsg && setNumberErrMsg('')
     setNumber(e)
+  }
+
+  // const setSubtype = () => {
+  //   console.log('setSubtype')
+  // }
+
+  const beforeCopy = (e: string | string[]) => {
+    const arr = typeof e === 'string' ? e.split(' | ') : e
+    const code =
+      arr[0] === 'create'
+        ? `c_give("${arr[1]}", ${arr[2]})`
+        : `for i=1,${arr[2]},1 do c_findnext("${arr[1]}",30):Remove() end`
+    navigator.clipboard.writeText(code)
   }
 
   return (
@@ -211,7 +239,7 @@ const ResourceModal = (props: types.ConfigProps) => {
                     onValueChange={changeCode}
                   />
                   <NextAutocomplete
-                    placeholder="请选择词条分类"
+                    placeholder="请输入所属模组"
                     defaultItems={modList}
                     errorMessage={modErrMsg}
                     defaultSelectedKey={
@@ -220,6 +248,12 @@ const ResourceModal = (props: types.ConfigProps) => {
                     onSelectionChange={onSelectionChange}
                     onInputChange={onInputChange}
                   />
+                  {/* <NextAutocomplete
+                    placeholder="请选择词条分类"
+                    width="200px"
+                    defaultItems={subtypeList}
+                    onSelectionChange={setSubtype}
+                  /> */}
                 </ModalBody>
                 <ModalFooter>
                   <Button
@@ -261,11 +295,24 @@ const ResourceModal = (props: types.ConfigProps) => {
                     value={number}
                     onValueChange={changeNumber}
                   />
-                  <Button color="primary" size="sm" onPress={generateCode}>
-                    生成
-                  </Button>
+                  <div className={styles['button-group']}>
+                    <Button
+                      color="primary"
+                      size="sm"
+                      onPress={() => generateCode('create')}
+                    >
+                      生成
+                    </Button>
+                    <Button
+                      color="danger"
+                      size="sm"
+                      onPress={() => generateCode('remove')}
+                    >
+                      删除
+                    </Button>
+                  </div>
                   {generate && (
-                    <Snippet variant="bordered" size="sm">
+                    <Snippet variant="bordered" size="sm" onCopy={beforeCopy}>
                       {generate}
                     </Snippet>
                   )}

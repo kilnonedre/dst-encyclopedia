@@ -179,7 +179,7 @@ const Resource = () => {
         />
         {modList.length > 0 && (
           <NextAutocomplete
-            placeholder="请选择词条分类"
+            placeholder="请选择所属模组"
             width="200px"
             defaultItems={modList}
             onSelectionChange={setMod}

@@ -35,7 +35,9 @@ const postFun = async () => {
           }`
         )
       }
-      const sql = `CREATE TABLE ${table.name} (${declare.join(',')})`
+      const sql = `CREATE TABLE IF NOT EXISTS ${table.name} (${declare.join(
+        ','
+      )})`
       return dbQuery(sql, [])
     })
   )

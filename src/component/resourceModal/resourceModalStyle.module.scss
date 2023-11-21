@@ -3,3 +3,12 @@
     height: 2.5rem;
   }
 }
+
+.button {
+  &-group {
+    @include flex($xGap: 1rem);
+    button {
+      width: 100%;
+    }
+  }
+}

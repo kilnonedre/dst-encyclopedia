@@ -43,9 +43,10 @@ const intoMods = async (mod: number | string) => {
 }
 
 const postFun = async ({ name, code, mod }: types.ConfigPostParams) => {
-  let sql = 'SELECT * FROM resources WHERE name = ?'
+  let sql = 'SELECT * FROM resources WHERE name = ? OR code = ?'
   const resourceList = (await dbQuery(sql, [
-    [[name]],
+    name,
+    code,
   ])) as Array<types.ConfigResource>
   if (resourceList.length > 0) throw new Error('词条已存在')
   if (typeof mod === 'string') {
