@@ -1,11 +1,11 @@
-import { homeRouterList } from './children/homeRouter'
+import { adminRouterList } from './children/adminRouter'
 
 const routerList = [
   {
-    mark: 'home',
+    mark: 'admin',
     name: '首页',
-    href: 'home',
-    children: homeRouterList,
+    href: 'admin',
+    children: adminRouterList,
   },
 ]
 

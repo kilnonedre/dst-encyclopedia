@@ -1,4 +1,4 @@
-import { ConfigResource, ConfigMode } from '@/app/home/resource/resourceType'
+import { ConfigResource, ConfigMode } from '@/app/admin/resource/resourceType'
 
 interface ConfigProps {
   mode: ConfigMode

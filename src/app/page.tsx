@@ -60,7 +60,7 @@ const Index = () => {
   }
 
   const goHome = () => {
-    router.push('/home/resource')
+    router.push('/admin/resource')
   }
 
   const login = async () => {

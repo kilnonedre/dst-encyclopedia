@@ -5,12 +5,12 @@ import { NextRequest } from 'next/server'
 import dbQuery from '@/util/mysql'
 
 const postFun = async ({ nickname, password }: types.ConfigPostParams) => {
-  const sql = 'SELECT * FROM users WHERE nickname = ? AND password = ?'
+  const sql = 'SELECT * FROM users WHERE nickname = ?'
   const userList = (await dbQuery(sql, [
     nickname,
-    password,
   ])) as Array<userTypes.ConfigUser>
   if (userList.length === 0) throw new Error('用户不存在')
+  else if (userList[0].password !== password) throw new Error('密码错误')
   return true
 }
 

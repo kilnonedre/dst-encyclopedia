@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styles from './resourceModalStyle.module.scss'
 import types from './resourceModalType.d'
 import resourceTypes from '@/app/api/resources/resourceType.d'
-import { ConfigMode } from '@/app/home/resource/resourceType'
+import { ConfigMode } from '@/app/admin/resource/resourceType'
 import {
   Modal,
   ModalContent,
@@ -209,7 +209,7 @@ const ResourceModal = (props: types.ConfigProps) => {
             {mode === 'edit' ? (
               <>
                 <ModalHeader className="flex flex-col gap-1">
-                  {props.title}
+                  {isCreate ? '创建' : '修改' + props.title}
                 </ModalHeader>
                 <ModalBody>
                   <Input
@@ -248,6 +248,7 @@ const ResourceModal = (props: types.ConfigProps) => {
                     onSelectionChange={onSelectionChange}
                     onInputChange={onInputChange}
                   />
+                  {/* <Upload onFormData={test} /> */}
                   {/* <NextAutocomplete
                     placeholder="请选择词条分类"
                     width="200px"

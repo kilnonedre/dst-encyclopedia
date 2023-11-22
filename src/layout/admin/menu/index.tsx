@@ -3,10 +3,10 @@
 import React from 'react'
 import styles from './menuStyle.module.scss'
 import { usePathname } from 'next/navigation'
-import { homeRouterList } from '@/router/children/homeRouter'
+import { adminRouterList } from '@/router/children/adminRouter'
 import Link from 'next/link'
 
-const menuList = homeRouterList
+const menuList = adminRouterList
 
 const Menu = () => {
   let pathname = usePathname().split('/').pop()
@@ -14,14 +14,14 @@ const Menu = () => {
   return (
     <div className={styles['menu']}>
       {menuList.map(menu => {
-        if (pathname === 'home') {
+        if (pathname === 'admin') {
           pathname = ''
         }
         const isActive = pathname === menu.href
         return (
           <div key={menu.mark} className={styles['menu-item']}>
             <Link
-              href={`/home/${menu.href}`}
+              href={`/admin/${menu.href}`}
               className={`${styles['menu-item-main']} ${
                 isActive && styles['active']
               }`}

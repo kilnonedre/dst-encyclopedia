@@ -1,8 +1,8 @@
 import React from 'react'
 import styles from './layoutStyle.module.scss'
 import types from './layoutType.d'
-import Header from '@/layout/home/header'
-import Menu from '@/layout/home/menu'
+import Header from '@/layout/admin/header'
+import Menu from '@/layout/admin/menu'
 
 const RootLayout = ({ children }: types.ConfigLayout) => {
   return (

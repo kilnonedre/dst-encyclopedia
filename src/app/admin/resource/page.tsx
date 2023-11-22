@@ -195,7 +195,7 @@ const Resource = () => {
         </Button>
       </div>
       <ResourceModal
-        title="创建词条"
+        title="词条"
         mode={mode}
         resource={resource}
         isOpen={isOpen}
