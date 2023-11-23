@@ -1,9 +1,21 @@
-import { response, tryRes, dataNow } from '@/util/backend'
+import { response, tryRes, dataNow, getFileExtension } from '@/util/backend'
 import { NextRequest } from 'next/server'
 import types from './resourceType.d'
 import mysqlTypes from '@/type/mysqlType.d'
 import modTypes from '../mods/modType.d'
 import dbQuery from '@/util/mysql'
+import { renameSync } from 'fs'
+import { FILE_PATH_ALL } from '@/config/env'
+import { join } from 'path'
+
+const fileReName = async (code: String, thumbnail: string) => {
+  const fileName = thumbnail.split('\\').pop() as string
+  const fileExtension = getFileExtension(thumbnail)
+  const oldFilePath = join(FILE_PATH_ALL, 'upload', fileName)
+  const newFilePath = join(FILE_PATH_ALL, 'upload', `${code}.${fileExtension}`)
+  await renameSync(oldFilePath, newFilePath)
+  return join('upload', `${code}.${fileExtension}`)
+}
 
 const getFun = async ({ name, mod, page }: types.ConfigGetParams) => {
   const sql = `SELECT resources.*, mods.name AS mod_name FROM resources JOIN mods ON resources.mod_id = mods.id WHERE resources.name LIKE "%${name}%" ${
@@ -42,7 +54,12 @@ const intoMods = async (mod: number | string) => {
   return dbMsg.insertId
 }
 
-const postFun = async ({ name, code, mod }: types.ConfigPostParams) => {
+const postFun = async ({
+  name,
+  code,
+  mod,
+  thumbnail,
+}: types.ConfigPostParams) => {
   let sql = 'SELECT * FROM resources WHERE name = ? OR code = ?'
   const resourceList = (await dbQuery(sql, [
     name,
@@ -52,9 +69,12 @@ const postFun = async ({ name, code, mod }: types.ConfigPostParams) => {
   if (typeof mod === 'string') {
     mod = await intoMods(mod)
   }
+  if (thumbnail) {
+    thumbnail = await fileReName(code, thumbnail)
+  }
   sql =
-    'INSERT INTO resources (name, code, mod_id, create_time, update_time) VALUES ?'
-  await dbQuery(sql, [[[name, code, mod, dataNow(), dataNow()]]])
+    'INSERT INTO resources (name, code, mod_id, thumbnail, create_time, update_time) VALUES ?'
+  await dbQuery(sql, [[[name, code, mod, thumbnail, dataNow(), dataNow()]]])
   return true
 }
 
@@ -65,13 +85,22 @@ export const POST = async (request: NextRequest) => {
   return response(200, 400, false, error.message)
 }
 
-const putFun = async ({ id, name, code, mod }: types.ConfigPutParams) => {
+const putFun = async ({
+  id,
+  name,
+  code,
+  mod,
+  thumbnail,
+}: types.ConfigPutParams) => {
   if (typeof mod === 'string') {
     mod = await intoMods(mod)
   }
+  if (thumbnail) {
+    thumbnail = await fileReName(code, thumbnail)
+  }
   const sql =
-    'UPDATE resources SET name = ?, code = ?, mod_id = ?, update_time = ? WHERE id = ?'
-  await dbQuery(sql, [name, code, mod, dataNow(), id])
+    'UPDATE resources SET name = ?, code = ?, mod_id = ?, thumbnail = ?, update_time = ? WHERE id = ?'
+  await dbQuery(sql, [name, code, mod, thumbnail, dataNow(), id])
   return true
 }
 

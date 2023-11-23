@@ -12,3 +12,20 @@
     }
   }
 }
+
+.upload {
+  width: 5rem;
+  aspect-ratio: 1/1;
+  position: relative;
+  &__img {
+    img {
+      aspect-ratio: 1/1;
+    }
+    &-delete {
+      position: absolute;
+      right: 0.25rem;
+      top: 0.25rem;
+      z-index: 99;
+    }
+  }
+}

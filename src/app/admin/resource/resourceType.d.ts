@@ -13,6 +13,12 @@ interface ConfigMod {
 
 type ConfigMode = 'edit' | 'generate'
 
-type ConfigColumnKey = 'serial' | 'name' | 'code' | 'mod_name' | 'action'
+type ConfigColumnKey =
+  | 'serial'
+  | 'name'
+  | 'code'
+  | 'thumbnail'
+  | 'mod_name'
+  | 'action'
 
 export { ConfigResource, ConfigColumnKey, ConfigMod, ConfigMode }

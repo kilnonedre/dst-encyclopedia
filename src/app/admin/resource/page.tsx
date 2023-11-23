@@ -14,6 +14,7 @@ import {
   useDisclosure,
   Pagination,
   Input,
+  Image,
 } from '@nextui-org/react'
 import { GetResource, GetMod, DeleteResource } from '@/api'
 import ResourceModal from '@/component/resourceModal'
@@ -21,11 +22,13 @@ import { toast } from 'sonner'
 import NextAutocomplete from '@/component/nextAutocomplete'
 import resourceTypes from '@/app/api/resources/resourceType.d'
 import Icon from '@/component/icon'
+import { BE_HOST } from '@/config/env'
 
 const thList = [
   { mark: 'serial', label: '#' },
   { mark: 'name', label: '名称' },
   { mark: 'code', label: '代码' },
+  { mark: 'thumbnail', label: '缩略图' },
   { mark: 'mod_name', label: '模组' },
   { mark: 'action', label: '操作' },
 ]
@@ -86,6 +89,18 @@ const Resource = () => {
         return resource[columnKey]
       case 'code':
         return resource[columnKey]
+      case 'thumbnail':
+        return (
+          resource[columnKey] && (
+            <Image
+              isZoomed
+              width={40}
+              radius="sm"
+              alt={resource['name']}
+              src={`${BE_HOST}/${resource[columnKey]}`}
+            />
+          )
+        )
       case 'mod_name':
         return resource[columnKey]
       case 'action':

@@ -13,10 +13,14 @@ import {
   Input,
   Chip,
   Snippet,
+  Image,
 } from '@nextui-org/react'
 import NextAutocomplete from '../nextAutocomplete'
 import { GetMod, CreateResource, UpdateResource } from '@/api'
 import { toast } from 'sonner'
+import Upload from '../upload'
+import Icon from '../icon'
+import { BE_HOST } from '@/config/env'
 
 // const subtypeList = [
 //   {
@@ -49,12 +53,14 @@ const ResourceModal = (props: types.ConfigProps) => {
   const [number, setNumber] = useState('')
   const [numberErrMsg, setNumberErrMsg] = useState('')
   const [generate, setGenerate] = useState('')
+  const [thumbnail, setThumbnail] = useState('')
 
   useEffect(() => {
     if (props.isOpen) {
       setMode(props.mode)
       setName(props.resource?.name ?? '')
       setCode(props.resource?.code ?? '')
+      setThumbnail(props.resource?.thumbnail ?? '')
       if (props.mode === 'edit') {
         getMod()
         setId(props.resource?.id ?? null)
@@ -83,6 +89,7 @@ const ResourceModal = (props: types.ConfigProps) => {
     setNumber('')
     setNumberErrMsg('')
     setGenerate('')
+    setThumbnail('')
   }
 
   const getMod = async () => {
@@ -139,7 +146,7 @@ const ResourceModal = (props: types.ConfigProps) => {
           return mod.label === modInput
         })?.id ?? mod
     }
-    editResource({ name, code, mod }, callback)
+    editResource({ name, code, mod, thumbnail }, callback)
   }
 
   const editResource = async (
@@ -188,10 +195,6 @@ const ResourceModal = (props: types.ConfigProps) => {
     setNumber(e)
   }
 
-  // const setSubtype = () => {
-  //   console.log('setSubtype')
-  // }
-
   const beforeCopy = (e: string | string[]) => {
     const arr = typeof e === 'string' ? e.split(' | ') : e
     const code =
@@ -199,6 +202,44 @@ const ResourceModal = (props: types.ConfigProps) => {
         ? `c_give("${arr[1]}", ${arr[2]})`
         : `for i=1,${arr[2]},1 do c_findnext("${arr[1]}",30):Remove() end`
     navigator.clipboard.writeText(code)
+  }
+
+  const onFile = (file: string) => {
+    console.log(file)
+    setThumbnail(file)
+  }
+
+  const removeThumbnail = (e: any) => {
+    setThumbnail('')
+    e.stopPropagation()
+  }
+
+  const uploadSlot = () => {
+    return (
+      <div className={styles['upload-main']}>
+        {thumbnail ? (
+          <div className={styles['upload__img']}>
+            <Image
+              isZoomed
+              width={80}
+              radius="sm"
+              alt="NextUI Fruit Image with Zoom"
+              src={`${BE_HOST}/${thumbnail}`}
+            />
+            <div className={styles['upload__img-delete']}>
+              <Icon
+                font={''}
+                size="0.875rem"
+                color="#ff0061"
+                onPress={removeThumbnail}
+              />
+            </div>
+          </div>
+        ) : (
+          <Icon font={''} size="1.25rem" />
+        )}
+      </div>
+    )
   }
 
   return (
@@ -209,7 +250,7 @@ const ResourceModal = (props: types.ConfigProps) => {
             {mode === 'edit' ? (
               <>
                 <ModalHeader className="flex flex-col gap-1">
-                  {isCreate ? '创建' : '修改' + props.title}
+                  {(isCreate ? '创建' : '修改') + props.title}
                 </ModalHeader>
                 <ModalBody>
                   <Input
@@ -248,7 +289,11 @@ const ResourceModal = (props: types.ConfigProps) => {
                     onSelectionChange={onSelectionChange}
                     onInputChange={onInputChange}
                   />
-                  {/* <Upload onFormData={test} /> */}
+                  <Upload
+                    className={styles['upload']}
+                    onFile={onFile}
+                    slot={uploadSlot()}
+                  />
                   {/* <NextAutocomplete
                     placeholder="请选择词条分类"
                     width="200px"

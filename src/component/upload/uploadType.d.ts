@@ -1,7 +1,7 @@
 interface ConfigProps {
   slot?: ReactDOM
   className?: string
-  onFormData: function
+  onFile?: function
 }
 
 export { ConfigProps }

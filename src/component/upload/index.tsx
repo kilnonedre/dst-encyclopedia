@@ -2,7 +2,9 @@
 
 import React, { useRef, useEffect } from 'react'
 import styles from './uploadStyle.module.scss'
+import { UploadFile } from '@/api'
 import types from './uploadType.d'
+import { toast } from 'sonner'
 
 const Upload = (props: types.ConfigProps) => {
   const fileFakeEle = useRef<HTMLDivElement>(null)
@@ -46,7 +48,14 @@ const Upload = (props: types.ConfigProps) => {
   const upload = async (file: File) => {
     const formData = new FormData()
     formData.set('file', file)
-    props.onFormData(formData)
+    const response = await UploadFile(formData)
+    const { code, data, msg } = await response.json()
+    if (code !== 200) {
+      toast.error(msg)
+      return
+    }
+    toast.success('文件上传成功')
+    props.onFile(data)
   }
 
   return (

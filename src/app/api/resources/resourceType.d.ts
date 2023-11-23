@@ -12,6 +12,7 @@ interface ConfigPostParams {
   name: string
   code: string
   mod: string | number
+  thumbnail: string
 }
 
 interface ConfigGetParams {

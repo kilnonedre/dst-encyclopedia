@@ -20,3 +20,19 @@ export const tryRes = async (fun: Function, ...args: any) => {
 }
 
 export const dataNow = () => Math.round(Number(new Date()) / 1000)
+
+export const formatFormData = (keyList: Array<string>, formData: FormData) => {
+  const result: { [key: string]: any } = {}
+  keyList.map(key => {
+    result[key] = formData.get(key)
+  })
+  return result
+}
+
+export const getFilename = (file: string) => {
+  return file.substring(0, file.lastIndexOf('.'))
+}
+
+export const getFileExtension = (file: string) => {
+  return file.split('.').pop()
+}

@@ -8,7 +8,7 @@ const codeList = [
   'c_godmode(false)',
 ]
 
-const Home = () => {
+const Admin = () => {
   return (
     <div>
       {codeList.map(code => {
@@ -18,4 +18,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default Admin
