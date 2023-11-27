@@ -1,20 +1,47 @@
-import { response, tryRes, dataNow, getFileExtension } from '@/util/backend'
+import {
+  response,
+  tryRes,
+  dataNow,
+  getFileExtension,
+  verifyJwt,
+} from '@/util/backend'
 import { NextRequest } from 'next/server'
 import types from './resourceType.d'
+import fileTypes from '../files/fileType'
 import mysqlTypes from '@/type/mysqlType.d'
 import modTypes from '../mods/modType.d'
 import dbQuery from '@/util/mysql'
-import { renameSync } from 'fs'
+import { renameSync, unlinkSync } from 'fs'
 import { FILE_PATH_ALL } from '@/config/env'
 import { join } from 'path'
 
-const fileReName = async (code: String, thumbnail: string) => {
-  const fileName = thumbnail.split('\\').pop() as string
+const fileReName = async (
+  code: String,
+  thumbnail: string,
+  fileName: string
+) => {
   const fileExtension = getFileExtension(thumbnail)
   const oldFilePath = join(FILE_PATH_ALL, 'upload', fileName)
   const newFilePath = join(FILE_PATH_ALL, 'upload', `${code}.${fileExtension}`)
   await renameSync(oldFilePath, newFilePath)
   return join('upload', `${code}.${fileExtension}`)
+}
+
+const removeImage = async (authorization: string, fileName: string) => {
+  const jwt = await verifyJwt(authorization)
+  let sql = 'SELECT * FROM temporaryFiles WHERE user_id = ?'
+  const temporaryFileList = (await dbQuery(sql, [
+    jwt.user_id,
+  ])) as Array<fileTypes.ConfigTemporaryFile>
+  console.log('fileName', fileName)
+  temporaryFileList.map(temporaryFile => {
+    if (fileName !== temporaryFile.file_name) {
+      const filePath = join(FILE_PATH_ALL, 'upload', temporaryFile.file_name)
+      unlinkSync(filePath)
+    }
+  })
+  sql = 'DELETE FROM temporaryFiles WHERE user_id = ?'
+  await dbQuery(sql, [jwt.user_id])
 }
 
 const getFun = async ({ name, mod, page }: types.ConfigGetParams) => {
@@ -59,7 +86,8 @@ const postFun = async ({
   code,
   mod,
   thumbnail,
-}: types.ConfigPostParams) => {
+  authorization,
+}: types.ConfigPostFunParams) => {
   let sql = 'SELECT * FROM resources WHERE name = ? OR code = ?'
   const resourceList = (await dbQuery(sql, [
     name,
@@ -69,17 +97,20 @@ const postFun = async ({
   if (typeof mod === 'string') {
     mod = await intoMods(mod)
   }
+  const fileName = thumbnail.split('\\').pop() as string
   if (thumbnail) {
-    thumbnail = await fileReName(code, thumbnail)
+    thumbnail = await fileReName(code, thumbnail, fileName)
   }
   sql =
     'INSERT INTO resources (name, code, mod_id, thumbnail, create_time, update_time) VALUES ?'
   await dbQuery(sql, [[[name, code, mod, thumbnail, dataNow(), dataNow()]]])
+  await removeImage(authorization, fileName)
   return true
 }
 
 export const POST = async (request: NextRequest) => {
   const req = await request.json()
+  req.authorization = request.headers.get('Authorization')
   const { isSuccess, error } = await tryRes(postFun, req)
   if (isSuccess) return response(200, 200, true)
   return response(200, 400, false, error.message)
@@ -91,21 +122,25 @@ const putFun = async ({
   code,
   mod,
   thumbnail,
-}: types.ConfigPutParams) => {
+  authorization,
+}: types.ConfigPutFunParams) => {
   if (typeof mod === 'string') {
     mod = await intoMods(mod)
   }
+  const fileName = thumbnail.split('\\').pop() as string
   if (thumbnail) {
-    thumbnail = await fileReName(code, thumbnail)
+    thumbnail = await fileReName(code, thumbnail, fileName)
   }
   const sql =
     'UPDATE resources SET name = ?, code = ?, mod_id = ?, thumbnail = ?, update_time = ? WHERE id = ?'
   await dbQuery(sql, [name, code, mod, thumbnail, dataNow(), id])
+  await removeImage(authorization, fileName)
   return true
 }
 
 export const PUT = async (request: NextRequest) => {
   const req = await request.json()
+  req.authorization = request.headers.get('Authorization')
   const { isSuccess, error } = await tryRes(putFun, req)
   if (isSuccess) return response(200, 200, true)
   return response(200, 400, false, error.message)

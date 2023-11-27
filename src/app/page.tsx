@@ -69,13 +69,14 @@ const Index = () => {
     setLoginLoad(true)
     const params = { nickname, password }
     const response = await Login(params)
-    const { code, msg } = await response.json()
+    const { code, data, msg } = await response.json()
     setLoginLoad(false)
     if (code !== 200) {
       toast.error(msg)
       return
     }
     toast.success('登录成功')
+    localStorage.setItem('DST_Token', data)
     goHome()
   }
 

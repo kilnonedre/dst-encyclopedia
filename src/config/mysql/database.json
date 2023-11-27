@@ -61,5 +61,16 @@
       "update_time": "INT"
     },
     "primaryKey": "id"
+  },
+  {
+    "name": "temporaryFiles",
+    "data": {
+      "id": "INT",
+      "user_id": "INT",
+      "file_name": "CHAR(255)",
+      "create_time": "INT",
+      "update_time": "INT"
+    },
+    "primaryKey": "id"
   }
 ]

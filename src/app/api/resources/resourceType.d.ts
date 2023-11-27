@@ -29,10 +29,20 @@ interface ConfigDeleteParams {
   id: number
 }
 
+interface ConfigPutFunParams extends ConfigPutParams {
+  authorization: string
+}
+
+interface ConfigPostFunParams extends ConfigPostParams {
+  authorization: string
+}
+
 export {
   ConfigResource,
   ConfigPostParams,
+  ConfigPostFunParams,
   ConfigGetParams,
   ConfigPutParams,
+  ConfigPutFunParams,
   ConfigDeleteParams,
 }
