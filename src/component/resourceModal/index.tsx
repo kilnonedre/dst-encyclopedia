@@ -205,7 +205,6 @@ const ResourceModal = (props: types.ConfigProps) => {
   }
 
   const onFile = (file: string) => {
-    console.log(file)
     setThumbnail(file)
   }
 

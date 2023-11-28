@@ -1,10 +1,5 @@
-import {
-  response,
-  tryRes,
-  dataNow,
-  getFileExtension,
-  verifyJwt,
-} from '@/util/backend'
+import { response, tryRes, dataNow, getFileExtension } from '@/util/backend'
+import { verifyToken } from '@/util/backend/token'
 import { NextRequest } from 'next/server'
 import types from './resourceType.d'
 import fileTypes from '../files/fileType'
@@ -28,12 +23,11 @@ const fileReName = async (
 }
 
 const removeImage = async (authorization: string, fileName: string) => {
-  const jwt = await verifyJwt(authorization)
+  const jwt = await verifyToken(authorization)
   let sql = 'SELECT * FROM temporaryFiles WHERE user_id = ?'
   const temporaryFileList = (await dbQuery(sql, [
     jwt.user_id,
   ])) as Array<fileTypes.ConfigTemporaryFile>
-  console.log('fileName', fileName)
   temporaryFileList.map(temporaryFile => {
     if (fileName !== temporaryFile.file_name) {
       const filePath = join(FILE_PATH_ALL, 'upload', temporaryFile.file_name)
@@ -97,8 +91,9 @@ const postFun = async ({
   if (typeof mod === 'string') {
     mod = await intoMods(mod)
   }
-  const fileName = thumbnail.split('\\').pop() as string
+  let fileName = ''
   if (thumbnail) {
+    fileName = thumbnail.split('\\').pop() as string
     thumbnail = await fileReName(code, thumbnail, fileName)
   }
   sql =
@@ -127,9 +122,18 @@ const putFun = async ({
   if (typeof mod === 'string') {
     mod = await intoMods(mod)
   }
-  const fileName = thumbnail.split('\\').pop() as string
+  let fileName = ''
   if (thumbnail) {
+    fileName = thumbnail.split('\\').pop() as string
     thumbnail = await fileReName(code, thumbnail, fileName)
+  }
+  if (!fileName) {
+    const sql = 'SELECT * FROM resources WHERE id = ?'
+    const resourceList = (await dbQuery(sql, [
+      id,
+    ])) as Array<types.ConfigResource>
+    const filePath = join(FILE_PATH_ALL, resourceList[0].thumbnail)
+    unlinkSync(filePath)
   }
   const sql =
     'UPDATE resources SET name = ?, code = ?, mod_id = ?, thumbnail = ?, update_time = ? WHERE id = ?'

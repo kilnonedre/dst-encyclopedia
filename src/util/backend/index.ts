@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import types from './backendType.d'
 
 export const response = (
   status: number,
@@ -36,16 +35,4 @@ export const getFilename = (file: string) => {
 
 export const getFileExtension = (file: string) => {
   return file.split('.').pop()
-}
-
-import jwt from 'jsonwebtoken'
-import { BE_TOKEN_SECRET } from '@/config/env'
-
-export const verifyJwt = async (authorization: string) => {
-  if (!authorization || !authorization.includes('Bearer '))
-    throw new Error('Token 不合法')
-  const token = authorization.substring('Bearer '.length, authorization.length)
-  const result = jwt.verify(token, BE_TOKEN_SECRET) as types.ConfigJwt
-  console.log('result', result)
-  return result
 }

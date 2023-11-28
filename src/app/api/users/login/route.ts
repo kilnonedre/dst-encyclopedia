@@ -3,8 +3,7 @@ import types from './loginType.d'
 import userTypes from '../userType.d'
 import { NextRequest } from 'next/server'
 import dbQuery from '@/util/mysql'
-import { BE_TOKEN_SECRET, BE_TOKEN_VALID } from '@/config/env'
-import jwt from 'jsonwebtoken'
+import { createToken } from '@/util/backend/token'
 
 const postFun = async ({ nickname, password }: types.ConfigPostParams) => {
   const sql = 'SELECT * FROM users WHERE nickname = ?'
@@ -13,11 +12,7 @@ const postFun = async ({ nickname, password }: types.ConfigPostParams) => {
   ])) as Array<userTypes.ConfigUser>
   if (userList.length === 0) throw new Error('用户不存在')
   else if (userList[0].password !== password) throw new Error('密码错误')
-  const token = jwt.sign(
-    { nickname, user_id: userList[0].id },
-    BE_TOKEN_SECRET,
-    { expiresIn: BE_TOKEN_VALID }
-  )
+  const token = await createToken({ nickname, user_id: userList[0].id })
   return token
 }
 

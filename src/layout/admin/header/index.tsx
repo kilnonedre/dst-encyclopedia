@@ -11,6 +11,7 @@ const Header = () => {
 
   const logout = () => {
     router.push('/')
+    localStorage.removeItem('DST_Token')
   }
 
   return (

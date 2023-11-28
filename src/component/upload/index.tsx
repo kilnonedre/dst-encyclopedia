@@ -41,7 +41,6 @@ const Upload = (props: types.ConfigProps) => {
 
   const getFile = () => {
     if (!fileRealEle.current || !fileRealEle.current.files) return
-    console.log(fileRealEle.current.files)
     upload(fileRealEle.current.files[0])
   }
 
