@@ -1,3 +1,5 @@
+import types from './httpType.d'
+
 const isFormData = (object: object | undefined) => {
   if (Object.prototype.toString.call(object) !== '[object FormData]')
     return false
@@ -15,15 +17,38 @@ const getToken = () => {
   return {}
 }
 
+const errMessageObj = {
+  400: '请求错误(400)',
+  401: '登录已过期，请重新登录(401)',
+  403: '拒绝访问(403)',
+  404: '请求出错(404)',
+  408: '请求超时(408)',
+  500: '服务器错误(500)',
+  501: '服务未实现(501)',
+  502: '网络错误(502)',
+  503: '服务不可用(503)',
+  504: '网络超时(504)',
+  505: 'HTTP版本不受支持(505)',
+}
+
+const errMessage = (status: types.ConfigErrStatus) => {
+  let message = errMessageObj[status]
+  if (!message) {
+    message = `连接出错(${status})`
+  }
+  return `${message}，请检查网络或联系管理员！`
+}
+
 import { toast } from 'sonner'
 
 const fetchWithInterceptor = (url: string, options: object) => {
   return fetch(url, options)
     .then(response => {
       if (!response.ok) {
+        const errMsg = errMessage(response.status as types.ConfigErrStatus)
+        toast.error(errMsg)
         if (response.status === 401) {
           window.history.pushState({}, '', '/')
-          toast.error('Token 失效，请重新登录')
           localStorage.removeItem('DST_Token')
         }
         throw new Error('网络请求错误: ' + response.status)
