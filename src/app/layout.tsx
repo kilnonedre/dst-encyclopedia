@@ -22,7 +22,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
   }, [pathname])
 
   return (
-    <html lang="en">
+    <html lang="zh-CN">
       <body>
         <Toaster closeButton richColors />
         <NextUIProvider>{children}</NextUIProvider>
