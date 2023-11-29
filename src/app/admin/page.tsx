@@ -11,9 +11,9 @@ const codeList = [
 const Admin = () => {
   return (
     <div>
-      {codeList.map(code => {
-        return <Snippet key={code}>{code}</Snippet>
-      })}
+      {codeList.map(code => (
+        <Snippet key={code}>{code}</Snippet>
+      ))}
     </div>
   )
 }

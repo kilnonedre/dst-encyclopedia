@@ -169,12 +169,10 @@ const Resource = () => {
       toast.error(msg)
       return
     }
-    const modList = data.map((mod: resourceTypes.ConfigResource) => {
-      return {
-        label: mod.name,
-        value: mod.id,
-      }
-    })
+    const modList = data.map((mod: resourceTypes.ConfigResource) => ({
+      label: mod.name,
+      value: mod.id,
+    }))
     setModList(modList)
   }
 

@@ -105,12 +105,10 @@ const ResourceModal = (props: types.ConfigProps) => {
       modList.push({ label: '默认', value: '默认' })
     } else {
       setIsEmpty(false)
-      modList = data.map((mod: resourceTypes.ConfigResource) => {
-        return {
-          label: mod.name,
-          value: mod.id,
-        }
-      })
+      modList = data.map((mod: resourceTypes.ConfigResource) => ({
+        label: mod.name,
+        value: mod.id,
+      }))
     }
     setModList(modList)
   }

@@ -7,9 +7,7 @@ const getFun = async () => {
   const sql =
     'SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = "dst_encyclopedia"'
   const data = (await dbQuery(sql, [])) as Array<types.ConfigTable>
-  const format = data.map(item => {
-    return item.TABLE_NAME
-  })
+  const format = data.map(item => item.TABLE_NAME)
   const isSame = tableList.length === format.length
   return isSame
 }
