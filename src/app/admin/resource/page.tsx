@@ -61,14 +61,14 @@ const Resource = () => {
     const response = await GetResource({
       name,
       mod: mod ?? '',
-      page: p || page,
+      page: p ?? page,
     })
     const { code, data, msg } = await response.json()
     if (code !== 200) {
       toast.error(msg)
       return
     }
-    let serial = ((p || page) - 1) * 10 + 1
+    let serial = ((p ?? page) - 1) * 10 + 1
     data.resourceList.map((resource: types.ConfigResource) => {
       resource.serial = serial
       serial++

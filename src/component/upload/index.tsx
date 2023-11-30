@@ -67,7 +67,7 @@ const Upload = (props: types.ConfigProps) => {
         onDragLeave={handleClearDragDefault}
         onDragOver={handleClearDragDefault}
       >
-        {props.slot || (
+        {props.slot ?? (
           <>
             <p className={styles['upload-main-icon']}></p>
             <p className={styles['upload-main-title']}>

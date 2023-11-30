@@ -32,10 +32,7 @@ const errMessageObj = {
 }
 
 const errMessage = (status: types.ConfigErrStatus) => {
-  let message = errMessageObj[status]
-  if (!message) {
-    message = `连接出错(${status})`
-  }
+  const message = errMessageObj[status] ?? `连接出错(${status})`
   return `${message}，请检查网络或联系管理员！`
 }
 
