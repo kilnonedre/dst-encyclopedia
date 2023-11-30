@@ -39,9 +39,13 @@ const removeImage = async (authorization: string, fileName: string) => {
 }
 
 const getFun = async ({ name, mod, page }: types.ConfigGetParams) => {
-  const sql = `SELECT resources.*, mods.name AS mod_name FROM resources JOIN mods ON resources.mod_id = mods.id WHERE resources.name LIKE "%${name}%" ${
-    mod ? 'AND resources.mod_id = ?' : ''
-  } ORDER BY id`
+  const isCode = name.startsWith('code_')
+  if (isCode) {
+    name = name.substring(5)
+  }
+  const sql = `SELECT resources.*, mods.name AS mod_name FROM resources JOIN mods ON resources.mod_id = mods.id WHERE ${
+    isCode ? 'resources.code' : 'resources.name'
+  } LIKE "%${name}%" ${mod ? 'AND resources.mod_id = ?' : ''} ORDER BY id`
   const resourceList = (await dbQuery(sql, [
     [[mod]],
   ])) as Array<types.ConfigResource>
