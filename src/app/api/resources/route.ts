@@ -136,8 +136,10 @@ const putFun = async ({
     const resourceList = (await dbQuery(sql, [
       id,
     ])) as Array<types.ConfigResource>
-    const filePath = join(FILE_PATH_ALL, resourceList[0].thumbnail)
-    unlinkSync(filePath)
+    if (resourceList[0].thumbnail) {
+      const filePath = join(FILE_PATH_ALL, resourceList[0].thumbnail)
+      unlinkSync(filePath)
+    }
   }
   const sql =
     'UPDATE resources SET name = ?, code = ?, mod_id = ?, thumbnail = ?, update_time = ? WHERE id = ?'
@@ -155,7 +157,13 @@ export const PUT = async (request: NextRequest) => {
 }
 
 const deleteFun = async ({ id }: types.ConfigDeleteParams) => {
-  const sql = 'DELETE FROM resources WHERE id = ?'
+  let sql = 'SELECT * FROM resources WHERE id = ?'
+  const resourceList = (await dbQuery(sql, [id])) as Array<types.ConfigResource>
+  if (resourceList[0].thumbnail) {
+    const filePath = join(FILE_PATH_ALL, resourceList[0].thumbnail)
+    unlinkSync(filePath)
+  }
+  sql = 'DELETE FROM resources WHERE id = ?'
   await dbQuery(sql, [id])
   return true
 }
