@@ -356,7 +356,7 @@ const ResourceModal = (props: types.ConfigProps) => {
       case 'delete':
         return (
           <>
-            <ModalHeader className="flex flex-col gap-1">删除条目</ModalHeader>
+            <ModalHeader className="flex flex-col gap-1">删除词条</ModalHeader>
             <ModalBody>此操作将会永久删除该词条，是否继续？</ModalBody>
             <ModalFooter>
               <Button

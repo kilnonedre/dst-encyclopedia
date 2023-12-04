@@ -23,6 +23,9 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <html lang="zh-CN">
+      <head>
+        <link rel="icon" href="/octopus.svg" />
+      </head>
       <body>
         <Toaster closeButton richColors />
         <NextUIProvider>{children}</NextUIProvider>

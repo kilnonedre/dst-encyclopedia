@@ -105,13 +105,21 @@ const Resource = () => {
       case 'action':
         return (
           <div className={styles['action']}>
-            <Icon font={''} size="1.1rem" onPress={() => generate(resource)} />
-            <Icon font={''} size="1.1rem" onPress={() => edit(resource)} />
+            <Icon
+              font={''}
+              size="1.1rem"
+              onPress={() => changeModalMode('generate', resource)}
+            />
+            <Icon
+              font={''}
+              size="1.1rem"
+              onPress={() => changeModalMode('edit', resource)}
+            />
             <Icon
               font={''}
               size="1.1rem"
               color="#ff0061"
-              onPress={() => remove(resource)}
+              onPress={() => changeModalMode('delete', resource)}
             />
           </div>
         )
@@ -119,12 +127,6 @@ const Resource = () => {
         const check: never = columnKey
         return check
     }
-  }
-
-  const generate = (resource: types.ConfigResource) => {
-    setMode('generate')
-    setResource(resource)
-    onOpen()
   }
 
   const reRender = (mark: types.ConfigMode) => {
@@ -136,20 +138,12 @@ const Resource = () => {
     renderResource()
   }
 
-  const create = () => {
-    setResource(null)
-    onOpen()
-  }
-
-  const edit = (resource: types.ConfigResource) => {
-    setMode('edit')
-    setResource(resource)
-    onOpen()
-  }
-
-  const remove = (resource: types.ConfigResource) => {
-    setMode('delete')
-    setResource(resource)
+  const changeModalMode = (
+    mark: types.ConfigMode,
+    resource?: types.ConfigResource
+  ) => {
+    setMode(mark)
+    setResource(resource ?? null)
     onOpen()
   }
 
@@ -198,7 +192,7 @@ const Resource = () => {
           className={styles['resource-header-button']}
           size="sm"
           color="primary"
-          onPress={create}
+          onPress={() => changeModalMode('edit')}
         >
           新建
         </Button>
