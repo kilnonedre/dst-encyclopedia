@@ -16,10 +16,15 @@ const fileReName = async (
   fileName: string
 ) => {
   const fileExtension = getFileExtension(thumbnail)
-  const oldFilePath = join(FILE_PATH_ALL, 'upload', fileName)
-  const newFilePath = join(FILE_PATH_ALL, 'upload', `${code}.${fileExtension}`)
+  const oldFilePath = join(FILE_PATH_ALL, 'temporaries', fileName)
+  const newFilePath = join(
+    FILE_PATH_ALL,
+    'thumbnails',
+    'resources',
+    `${code}.${fileExtension}`
+  )
   await renameSync(oldFilePath, newFilePath)
-  return join('upload', `${code}.${fileExtension}`)
+  return join('upload', 'thumbnails', 'resources', `${code}.${fileExtension}`)
 }
 
 const removeImage = async (authorization: string, fileName: string) => {
@@ -30,7 +35,11 @@ const removeImage = async (authorization: string, fileName: string) => {
   ])) as Array<fileTypes.ConfigTemporaryFile>
   temporaryFileList.map(temporaryFile => {
     if (fileName !== temporaryFile.file_name) {
-      const filePath = join(FILE_PATH_ALL, 'upload', temporaryFile.file_name)
+      const filePath = join(
+        FILE_PATH_ALL,
+        'temporaries',
+        temporaryFile.file_name
+      )
       unlinkSync(filePath)
     }
   })

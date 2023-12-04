@@ -26,9 +26,9 @@ const postFun = async (request: NextRequest) => {
   }
   const bytes = await file.arrayBuffer()
   const buffer = Buffer.from(bytes)
-  const filePath = join(FILE_PATH_ALL, 'upload', fileName)
+  const filePath = join(FILE_PATH_ALL, 'temporaries', fileName)
   await writeFile(filePath, buffer)
-  const result = join('upload', fileName)
+  const result = join('upload', 'temporaries', fileName)
   return result
 }
 

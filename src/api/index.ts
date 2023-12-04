@@ -32,6 +32,9 @@ export const CheckDatabase = () => Get(splicePath('/databases'))
 // 创建数据库
 export const CreateDatabase = () => Post(splicePath('/databases'))
 
+// 运行数据库相关脚本
+export const RunScript = () => Put(splicePath('/databases'))
+
 /**模组 */
 
 // 获取模组列表

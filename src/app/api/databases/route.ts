@@ -18,7 +18,7 @@ export const GET = async () => {
     const msg = `${data ? '不' : ''}需要对表进行修改`
     return response(200, 200, data, msg)
   }
-  return response(200, 400, false, error.sqlMessage)
+  return response(200, 400, false, error.message)
 }
 
 const postFun = async () => {
@@ -45,5 +45,16 @@ const postFun = async () => {
 export const POST = async () => {
   const { isSuccess, error } = await tryRes(postFun)
   if (isSuccess) return response(200, 200, true)
-  return response(200, 400, false, error.sqlMessage)
+  return response(200, 400, false, error.message)
+}
+
+const putFun = async () => {
+  throw new Error('暂无待运行脚本')
+  return true
+}
+
+export const PUT = async () => {
+  const { isSuccess, error } = await tryRes(putFun)
+  if (isSuccess) return response(200, 200, true)
+  return response(200, 400, false, error.message)
 }
