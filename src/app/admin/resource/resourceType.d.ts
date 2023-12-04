@@ -11,7 +11,7 @@ interface ConfigMod {
   value: string
 }
 
-type ConfigMode = 'edit' | 'generate'
+type ConfigMode = 'edit' | 'generate' | 'delete'
 
 type ConfigColumnKey =
   | 'serial'

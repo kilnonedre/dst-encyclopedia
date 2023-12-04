@@ -146,7 +146,8 @@ const putFun = async ({
       id,
     ])) as Array<types.ConfigResource>
     if (resourceList[0].thumbnail) {
-      const filePath = join(FILE_PATH_ALL, resourceList[0].thumbnail)
+      const fileName = resourceList[0].thumbnail.split('\\').pop() as string
+      const filePath = join(FILE_PATH_ALL, 'thumbnails', 'resources', fileName)
       unlinkSync(filePath)
     }
   }
@@ -169,7 +170,8 @@ const deleteFun = async ({ id }: types.ConfigDeleteParams) => {
   let sql = 'SELECT * FROM resources WHERE id = ?'
   const resourceList = (await dbQuery(sql, [id])) as Array<types.ConfigResource>
   if (resourceList[0].thumbnail) {
-    const filePath = join(FILE_PATH_ALL, resourceList[0].thumbnail)
+    const fileName = resourceList[0].thumbnail.split('\\').pop() as string
+    const filePath = join(FILE_PATH_ALL, 'thumbnails', 'resources', fileName)
     unlinkSync(filePath)
   }
   sql = 'DELETE FROM resources WHERE id = ?'

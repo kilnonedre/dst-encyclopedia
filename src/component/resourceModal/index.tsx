@@ -16,26 +16,11 @@ import {
   Image,
 } from '@nextui-org/react'
 import NextAutocomplete from '../nextAutocomplete'
-import { GetMod, CreateResource, UpdateResource } from '@/api'
+import { GetMod, CreateResource, UpdateResource, DeleteResource } from '@/api'
 import { toast } from 'sonner'
 import Upload from '../upload'
 import Icon from '../icon'
 import { BE_HOST } from '@/config/env'
-
-// const subtypeList = [
-//   {
-//     label: '全局',
-//     value: 'overall',
-//   },
-//   {
-//     label: '全局',
-//     value: 'overall',
-//   },
-//     {
-//     label: '全局',
-//     value: 'overall',
-//   },
-// ]
 
 const ResourceModal = (props: types.ConfigProps) => {
   const [modList, setModList] = useState<Array<types.ConfigMod>>([])
@@ -61,9 +46,9 @@ const ResourceModal = (props: types.ConfigProps) => {
       setName(props.resource?.name ?? '')
       setCode(props.resource?.code ?? '')
       setThumbnail(props.resource?.thumbnail ?? '')
+      setId(props.resource?.id ?? null)
       if (props.mode === 'edit') {
         getMod()
-        setId(props.resource?.id ?? null)
         setIsCreate(!props.resource)
       } else {
         setNumber('')
@@ -160,7 +145,19 @@ const ResourceModal = (props: types.ConfigProps) => {
       return
     }
     toast.success(`词条${isCreate ? '创建' : '修改'}成功`)
-    props.reRender()
+    props.reRender(mode)
+    callback()
+  }
+
+  const onRemove = async (callback: Function) => {
+    const response = await DeleteResource({ id: id as number })
+    const { code, msg } = await response.json()
+    if (code !== 200) {
+      toast.error(msg)
+      return
+    }
+    toast.success('删除成功')
+    props.reRender(mode)
     callback()
   }
 
@@ -239,133 +236,156 @@ const ResourceModal = (props: types.ConfigProps) => {
     )
   }
 
+  const formTemplate = (callback: Function) => {
+    switch (mode) {
+      case 'edit':
+        return (
+          <>
+            <ModalHeader className="flex flex-col gap-1">
+              {(isCreate ? '创建' : '修改') + props.title}
+            </ModalHeader>
+            <ModalBody>
+              <Input
+                size="sm"
+                radius="md"
+                className={styles['input']}
+                isClearable
+                type="text"
+                variant="bordered"
+                placeholder="请输入词条名称"
+                isInvalid={!!nameErrMsg}
+                errorMessage={nameErrMsg}
+                value={name}
+                onValueChange={changeName}
+              />
+              <Input
+                size="sm"
+                radius="md"
+                className={styles['input']}
+                isClearable
+                type="text"
+                variant="bordered"
+                placeholder="请输入词条代码"
+                isInvalid={!!codeErrMsg}
+                errorMessage={codeErrMsg}
+                value={code}
+                onValueChange={changeCode}
+              />
+              <NextAutocomplete
+                placeholder="请输入所属模组"
+                defaultItems={modList}
+                errorMessage={modErrMsg}
+                defaultSelectedKey={
+                  props.resource?.mod_id ?? (isEmpty ? '默认' : 1)
+                }
+                onSelectionChange={onSelectionChange}
+                onInputChange={onInputChange}
+              />
+              <Upload
+                className={styles['upload']}
+                onFile={onFile}
+                slot={uploadSlot()}
+              />
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                size="sm"
+                color="danger"
+                variant="light"
+                onPress={() => {
+                  callback()
+                }}
+              >
+                取消
+              </Button>
+              <Button
+                size="sm"
+                color="primary"
+                onPress={() => onSubmit(callback)}
+              >
+                {isCreate ? '创建' : '修改'}
+              </Button>
+            </ModalFooter>
+          </>
+        )
+      case 'generate':
+        return (
+          <>
+            <ModalHeader className="flex flex-col gap-1">代码生成</ModalHeader>
+            <ModalBody>
+              <Chip color="warning" variant="dot">
+                {name + code}
+              </Chip>
+              <Input
+                size="sm"
+                radius="md"
+                className={styles['input']}
+                isClearable
+                type="text"
+                variant="bordered"
+                placeholder="请输入数量"
+                isInvalid={!!numberErrMsg}
+                errorMessage={numberErrMsg}
+                value={number}
+                onValueChange={changeNumber}
+              />
+              <div className={styles['button-group']}>
+                <Button
+                  color="primary"
+                  size="sm"
+                  onPress={() => generateCode('create')}
+                >
+                  生成
+                </Button>
+                <Button
+                  color="danger"
+                  size="sm"
+                  onPress={() => generateCode('remove')}
+                >
+                  删除
+                </Button>
+              </div>
+              {generate && (
+                <Snippet variant="bordered" size="sm" onCopy={beforeCopy}>
+                  {generate}
+                </Snippet>
+              )}
+            </ModalBody>
+            <ModalFooter></ModalFooter>
+          </>
+        )
+      case 'delete':
+        return (
+          <>
+            <ModalHeader className="flex flex-col gap-1">删除条目</ModalHeader>
+            <ModalBody>此操作将会永久删除该词条，是否继续？</ModalBody>
+            <ModalFooter>
+              <Button
+                size="sm"
+                color="danger"
+                variant="light"
+                onPress={() => {
+                  callback()
+                }}
+              >
+                取消
+              </Button>
+              <Button
+                size="sm"
+                color="primary"
+                onPress={() => onRemove(callback)}
+              >
+                删除
+              </Button>
+            </ModalFooter>
+          </>
+        )
+    }
+  }
+
   return (
     <Modal isOpen={props.isOpen} onOpenChange={props.onOpenChange}>
-      <ModalContent>
-        {onClose => (
-          <>
-            {mode === 'edit' ? (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  {(isCreate ? '创建' : '修改') + props.title}
-                </ModalHeader>
-                <ModalBody>
-                  <Input
-                    size="sm"
-                    radius="md"
-                    className={styles['input']}
-                    isClearable
-                    type="text"
-                    variant="bordered"
-                    placeholder="请输入词条名称"
-                    isInvalid={!!nameErrMsg}
-                    errorMessage={nameErrMsg}
-                    value={name}
-                    onValueChange={changeName}
-                  />
-                  <Input
-                    size="sm"
-                    radius="md"
-                    className={styles['input']}
-                    isClearable
-                    type="text"
-                    variant="bordered"
-                    placeholder="请输入词条代码"
-                    isInvalid={!!codeErrMsg}
-                    errorMessage={codeErrMsg}
-                    value={code}
-                    onValueChange={changeCode}
-                  />
-                  <NextAutocomplete
-                    placeholder="请输入所属模组"
-                    defaultItems={modList}
-                    errorMessage={modErrMsg}
-                    defaultSelectedKey={
-                      props.resource?.mod_id ?? (isEmpty ? '默认' : 1)
-                    }
-                    onSelectionChange={onSelectionChange}
-                    onInputChange={onInputChange}
-                  />
-                  <Upload
-                    className={styles['upload']}
-                    onFile={onFile}
-                    slot={uploadSlot()}
-                  />
-                  {/* <NextAutocomplete
-                    placeholder="请选择词条分类"
-                    width="200px"
-                    defaultItems={subtypeList}
-                    onSelectionChange={setSubtype}
-                  /> */}
-                </ModalBody>
-                <ModalFooter>
-                  <Button
-                    size="sm"
-                    color="danger"
-                    variant="light"
-                    onPress={onClose}
-                  >
-                    取消
-                  </Button>
-                  <Button
-                    size="sm"
-                    color="primary"
-                    onPress={() => onSubmit(onClose)}
-                  >
-                    {isCreate ? '创建' : '修改'}
-                  </Button>
-                </ModalFooter>
-              </>
-            ) : (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  代码生成
-                </ModalHeader>
-                <ModalBody>
-                  <Chip color="warning" variant="dot">
-                    {name + code}
-                  </Chip>
-                  <Input
-                    size="sm"
-                    radius="md"
-                    className={styles['input']}
-                    isClearable
-                    type="text"
-                    variant="bordered"
-                    placeholder="请输入数量"
-                    isInvalid={!!numberErrMsg}
-                    errorMessage={numberErrMsg}
-                    value={number}
-                    onValueChange={changeNumber}
-                  />
-                  <div className={styles['button-group']}>
-                    <Button
-                      color="primary"
-                      size="sm"
-                      onPress={() => generateCode('create')}
-                    >
-                      生成
-                    </Button>
-                    <Button
-                      color="danger"
-                      size="sm"
-                      onPress={() => generateCode('remove')}
-                    >
-                      删除
-                    </Button>
-                  </div>
-                  {generate && (
-                    <Snippet variant="bordered" size="sm" onCopy={beforeCopy}>
-                      {generate}
-                    </Snippet>
-                  )}
-                </ModalBody>
-                <ModalFooter></ModalFooter>
-              </>
-            )}
-          </>
-        )}
-      </ModalContent>
+      <ModalContent>{onClose => <>{formTemplate(onClose)}</>}</ModalContent>
     </Modal>
   )
 }

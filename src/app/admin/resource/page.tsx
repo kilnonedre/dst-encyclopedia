@@ -16,7 +16,7 @@ import {
   Input,
   Image,
 } from '@nextui-org/react'
-import { GetResource, GetMod, DeleteResource } from '@/api'
+import { GetResource, GetMod } from '@/api'
 import ResourceModal from '@/component/resourceModal'
 import { toast } from 'sonner'
 import NextAutocomplete from '@/component/nextAutocomplete'
@@ -112,7 +112,7 @@ const Resource = () => {
               font={''}
               size="1.1rem"
               color="#ff0061"
-              onPress={() => remove(resource.id)}
+              onPress={() => remove(resource)}
             />
           </div>
         )
@@ -128,7 +128,12 @@ const Resource = () => {
     onOpen()
   }
 
-  const reRender = () => {
+  const reRender = (mark: types.ConfigMode) => {
+    if (mark === 'delete' && resourceList.length === 1 && page > 1) {
+      setPage(page - 1)
+      renderResource(page - 1)
+      return
+    }
     renderResource()
   }
 
@@ -138,23 +143,15 @@ const Resource = () => {
   }
 
   const edit = (resource: types.ConfigResource) => {
+    setMode('edit')
     setResource(resource)
     onOpen()
   }
 
-  const remove = async (id: number) => {
-    const response = await DeleteResource({ id })
-    const { code, msg } = await response.json()
-    if (code !== 200) {
-      toast.error(msg)
-      return
-    }
-    if (resourceList.length === 1 && page > 1) {
-      setPage(page - 1)
-      renderResource(page - 1)
-      return
-    }
-    renderResource()
+  const remove = (resource: types.ConfigResource) => {
+    setMode('delete')
+    setResource(resource)
+    onOpen()
   }
 
   const changePagination = (p: number) => {
