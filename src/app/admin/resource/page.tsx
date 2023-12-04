@@ -22,7 +22,6 @@ import { toast } from 'sonner'
 import NextAutocomplete from '@/component/nextAutocomplete'
 import resourceTypes from '@/app/api/resources/resourceType.d'
 import Icon from '@/component/icon'
-import { BE_HOST } from '@/config/env'
 
 const thList = [
   { mark: 'serial', label: '#' },
@@ -97,7 +96,7 @@ const Resource = () => {
               width={40}
               radius="sm"
               alt={resource['name']}
-              src={`${BE_HOST}/${resource[columnKey]}`}
+              src={`/${resource[columnKey]}`}
             />
           )
         )

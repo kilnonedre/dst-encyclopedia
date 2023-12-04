@@ -20,7 +20,6 @@ import { GetMod, CreateResource, UpdateResource, DeleteResource } from '@/api'
 import { toast } from 'sonner'
 import Upload from '../upload'
 import Icon from '../icon'
-import { BE_HOST } from '@/config/env'
 
 const ResourceModal = (props: types.ConfigProps) => {
   const [modList, setModList] = useState<Array<types.ConfigMod>>([])
@@ -218,7 +217,7 @@ const ResourceModal = (props: types.ConfigProps) => {
               width={80}
               radius="sm"
               alt="NextUI Fruit Image with Zoom"
-              src={`${BE_HOST}/${thumbnail}`}
+              src={`/${thumbnail}`}
             />
             <div className={styles['upload__img-delete']}>
               <Icon
