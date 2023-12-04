@@ -95,6 +95,7 @@ const postFun = async ({
   thumbnail,
   authorization,
 }: types.ConfigPostFunParams) => {
+  // throw new Error('不要改我的数据，傻呗')
   let sql = 'SELECT * FROM resources WHERE name = ? OR code = ?'
   const resourceList = (await dbQuery(sql, [
     name,
@@ -132,6 +133,7 @@ const putFun = async ({
   thumbnail,
   authorization,
 }: types.ConfigPutFunParams) => {
+  // throw new Error('不要改我的数据，傻呗')
   if (typeof mod === 'string') {
     mod = await intoMods(mod)
   }
@@ -167,6 +169,7 @@ export const PUT = async (request: NextRequest) => {
 }
 
 const deleteFun = async ({ id }: types.ConfigDeleteParams) => {
+  // throw new Error('不要改我的数据，傻呗')
   let sql = 'SELECT * FROM resources WHERE id = ?'
   const resourceList = (await dbQuery(sql, [id])) as Array<types.ConfigResource>
   if (resourceList[0].thumbnail) {
@@ -183,5 +186,5 @@ export const DELETE = async (request: NextRequest) => {
   const req = await request.json()
   const { isSuccess, error } = await tryRes(deleteFun, req)
   if (isSuccess) return response(200, 200, true)
-  return response(200, 400, error.message)
+  return response(200, 400, false, error.message)
 }
