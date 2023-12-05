@@ -6,7 +6,7 @@ import fileTypes from '../files/fileType'
 import mysqlTypes from '@/type/mysqlType.d'
 import modTypes from '../mods/modType.d'
 import dbQuery from '@/util/mysql'
-import { renameSync, unlinkSync } from 'fs'
+import { renameSync, unlinkSync, existsSync } from 'fs'
 import { FILE_PATH_ALL } from '@/config/env'
 import { join } from 'path'
 
@@ -40,7 +40,7 @@ const removeImage = async (authorization: string, fileName: string) => {
         'temporaries',
         temporaryFile.file_name
       )
-      unlinkSync(filePath)
+      existsSync(filePath) && unlinkSync(filePath)
     }
   })
   sql = 'DELETE FROM temporaryFiles WHERE user_id = ?'
