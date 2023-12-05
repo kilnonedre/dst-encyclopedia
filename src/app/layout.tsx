@@ -5,11 +5,14 @@ import './globalStyle.css'
 import { NextUIProvider } from '@nextui-org/react'
 import { Toaster, toast } from 'sonner'
 import { usePathname, useRouter } from 'next/navigation'
+import { setRouter } from '@/util/http'
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname()
 
   const router = useRouter()
+
+  setRouter(router)
 
   const noVerifyPageList = ['/']
 

@@ -37,6 +37,13 @@ const errMessage = (status: types.ConfigErrStatus) => {
 }
 
 import { toast } from 'sonner'
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
+
+let router: null | AppRouterInstance = null
+
+const setRouter = (Router: AppRouterInstance) => {
+  router = Router
+}
 
 const fetchWithInterceptor = (url: string, options: object) => {
   return fetch(url, options)
@@ -45,7 +52,7 @@ const fetchWithInterceptor = (url: string, options: object) => {
         const errMsg = errMessage(response.status as types.ConfigErrStatus)
         toast.error(errMsg)
         if (response.status === 401) {
-          window.history.pushState({}, '', '/')
+          router && router.push('/')
           localStorage.removeItem('DST_Token')
         }
         throw new Error('网络请求错误: ' + response.status)
@@ -106,4 +113,4 @@ const Delete = (url: string, params?: object, config?: object) => {
   })
 }
 
-export { joinPath, Get, Post, Put, Delete }
+export { joinPath, Get, Post, Put, Delete, setRouter }
