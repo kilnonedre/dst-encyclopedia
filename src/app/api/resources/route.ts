@@ -49,9 +49,7 @@ const removeImage = async (authorization: string, fileName: string) => {
 
 const getFun = async ({ name, mod, page }: types.ConfigGetParams) => {
   const isCode = name.startsWith('code_')
-  if (isCode) {
-    name = name.substring(5)
-  }
+  if (isCode) name = name.substring(5)
   const sql = `SELECT resources.*, mods.name AS mod_name FROM resources JOIN mods ON resources.mod_id = mods.id WHERE ${
     isCode ? 'resources.code' : 'resources.name'
   } LIKE "%${name}%" ${mod ? 'AND resources.mod_id = ?' : ''} ORDER BY id`
@@ -102,9 +100,7 @@ const postFun = async ({
     code,
   ])) as Array<types.ConfigResource>
   if (resourceList.length > 0) throw new Error('词条已存在')
-  if (typeof mod === 'string') {
-    mod = await intoMods(mod)
-  }
+  if (typeof mod === 'string') mod = await intoMods(mod)
   let fileName = ''
   if (thumbnail) {
     fileName = thumbnail.split('\\').pop() as string
@@ -134,9 +130,7 @@ const putFun = async ({
   authorization,
 }: types.ConfigPutFunParams) => {
   // throw new Error('不要改我的数据，傻呗')
-  if (typeof mod === 'string') {
-    mod = await intoMods(mod)
-  }
+  if (typeof mod === 'string') mod = await intoMods(mod)
   let fileName = ''
   if (thumbnail) {
     fileName = thumbnail.split('\\').pop() as string

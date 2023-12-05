@@ -14,9 +14,7 @@ const Menu = () => {
   return (
     <div className={styles['menu']}>
       {menuList.map(menu => {
-        if (pathname === 'admin') {
-          pathname = ''
-        }
+        if (pathname === 'admin') pathname = ''
         const isActive = pathname === menu.href
         return (
           <div key={menu.mark} className={styles['menu-item']}>

@@ -63,10 +63,7 @@ const Resource = () => {
       page: p ?? page,
     })
     const { code, data, msg } = await response.json()
-    if (code !== 200) {
-      toast.error(msg)
-      return
-    }
+    if (code !== 200) return toast.error(msg)
     let serial = ((p ?? page) - 1) * 10 + 1
     data.resourceList.map((resource: types.ConfigResource) => {
       resource.serial = serial
@@ -87,7 +84,11 @@ const Resource = () => {
       case 'name':
         return resource[columnKey]
       case 'code':
-        return resource[columnKey]
+        return resource[columnKey] === 'null' ? (
+          <Icon font={''} size="1.1rem" cursor="text" />
+        ) : (
+          resource[columnKey]
+        )
       case 'thumbnail':
         return (
           resource[columnKey] && (
@@ -155,10 +156,7 @@ const Resource = () => {
   const getMod = async () => {
     const response = await GetMod()
     const { code, data, msg } = await response.json()
-    if (code !== 200) {
-      toast.error(msg)
-      return
-    }
+    if (code !== 200) return toast.error(msg)
     const modList = data.map((mod: resourceTypes.ConfigResource) => ({
       label: mod.name,
       value: mod.id,

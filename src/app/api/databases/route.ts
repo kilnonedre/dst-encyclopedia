@@ -14,10 +14,8 @@ const getFun = async () => {
 
 export const GET = async () => {
   const { isSuccess, data, error } = await tryRes(getFun)
-  if (isSuccess) {
-    const msg = `${data ? '不' : ''}需要对表进行修改`
-    return response(200, 200, data, msg)
-  }
+  if (isSuccess)
+    return response(200, 200, data, `${data ? '不' : ''}需要对表进行修改`)
   return response(200, 400, false, error.message)
 }
 

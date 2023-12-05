@@ -79,10 +79,7 @@ const ResourceModal = (props: types.ConfigProps) => {
   const getMod = async () => {
     const response = await GetMod()
     const { code, data, msg } = await response.json()
-    if (code !== 200) {
-      toast.error(msg)
-      return
-    }
+    if (code !== 200) return toast.error(msg)
     let modList = []
     if (data.length === 0) {
       setIsEmpty(true)
@@ -109,24 +106,12 @@ const ResourceModal = (props: types.ConfigProps) => {
   }
 
   const onSubmit = async (callback: Function) => {
-    if (!name.trim()) {
-      setNameErrMsg('请输入词条名称')
-      return
-    }
-    if (!code.trim()) {
-      setCodeErrMsg('请输入词条代码')
-      return
-    }
-    if (!modInput.trim() && !modSelect) {
-      setModErrMsg('请输入所属模组')
-      return
-    }
+    if (!name.trim()) return setNameErrMsg('请输入词条名称')
+    if (!code.trim()) return setCodeErrMsg('请输入词条代码')
+    if (!modInput.trim() && !modSelect) return setModErrMsg('请输入所属模组')
     let mod = modSelect ?? modInput
     if (!modSelect) {
-      mod =
-        modList.find(mod => {
-          return mod.label === modInput
-        })?.id ?? mod
+      mod = modList.find(mod => mod.label === modInput)?.id ?? mod
     }
     editResource({ name, code, mod, thumbnail }, callback)
   }
@@ -139,10 +124,7 @@ const ResourceModal = (props: types.ConfigProps) => {
       ? await CreateResource(params)
       : await UpdateResource({ ...params, id: id as number })
     const { code, msg } = await response.json()
-    if (code !== 200) {
-      toast.error(msg)
-      return
-    }
+    if (code !== 200) return toast.error(msg)
     toast.success(`词条${isCreate ? '创建' : '修改'}成功`)
     props.reRender(mode)
     callback()
@@ -151,10 +133,7 @@ const ResourceModal = (props: types.ConfigProps) => {
   const onRemove = async (callback: Function) => {
     const response = await DeleteResource({ id: id as number })
     const { code, msg } = await response.json()
-    if (code !== 200) {
-      toast.error(msg)
-      return
-    }
+    if (code !== 200) return toast.error(msg)
     toast.success('删除成功')
     props.reRender(mode)
     callback()
@@ -171,15 +150,10 @@ const ResourceModal = (props: types.ConfigProps) => {
   }
 
   const generateCode = (mark: 'create' | 'remove') => {
-    if (!number.trim()) {
-      setNumberErrMsg('请输入数量')
-      return
-    }
+    if (code === 'null') return toast.info('该物品无法通过代码生成')
+    if (!number.trim()) return setNumberErrMsg('请输入数量')
     const num = Number(number)
-    if (isNaN(num)) {
-      setNumberErrMsg('请输入数字')
-      return
-    }
+    if (isNaN(num)) return setNumberErrMsg('请输入数字')
     const gen = `${mark} | ${code} | ${num}`
     setGenerate(gen)
   }
@@ -313,7 +287,7 @@ const ResourceModal = (props: types.ConfigProps) => {
             <ModalHeader className="flex flex-col gap-1">代码生成</ModalHeader>
             <ModalBody>
               <Chip color="warning" variant="dot">
-                {name + code}
+                {`${name}  ${code !== 'null' ? code : ''}`}
               </Chip>
               <Input
                 size="sm"

@@ -9,10 +9,7 @@ const Database = () => {
   const runScript = async () => {
     const response = await RunScript()
     const { code, msg } = await response.json()
-    if (code !== 200) {
-      toast.error(msg)
-      return
-    }
+    if (code !== 200) return toast.error(msg)
     toast.success('脚本执行成功')
   }
 

@@ -27,10 +27,7 @@ const Index = () => {
   const checkDatabase = async () => {
     const response = await CheckDatabase()
     const { code, data, msg } = await response.json()
-    if (code !== 200) {
-      toast.error(msg)
-      return
-    }
+    if (code !== 200) return toast.error(msg)
     setIsNeedCreate(!data)
   }
 
@@ -39,10 +36,7 @@ const Index = () => {
     const response = await CreateDatabase()
     const { code, data, msg } = await response.json()
     setCreateDBLoad(false)
-    if (code !== 200) {
-      toast.error(msg)
-      return
-    }
+    if (code !== 200) return toast.error(msg)
     toast.success('数据库创建成功')
     setIsNeedCreate(!data)
   }
@@ -71,10 +65,7 @@ const Index = () => {
     const response = await Login(params)
     const { code, data, msg } = await response.json()
     setLoginLoad(false)
-    if (code !== 200) {
-      toast.error(msg)
-      return
-    }
+    if (code !== 200) return toast.error(msg)
     toast.success('登录成功')
     localStorage.setItem('DST_Token', data)
     goHome()
@@ -88,10 +79,7 @@ const Index = () => {
     const response = await Register(params)
     const { code, msg } = await response.json()
     setRegisterLoad(false)
-    if (code !== 200) {
-      toast.error(msg)
-      return
-    }
+    if (code !== 200) return toast.error(msg)
     toast.success('注册成功')
     login()
   }

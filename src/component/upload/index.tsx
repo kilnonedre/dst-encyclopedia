@@ -29,9 +29,7 @@ const Upload = (props: types.ConfigProps) => {
   const handleDrop = (e: any) => {
     handleClearDragDefault(e)
     const files = [...e.dataTransfer.files]
-    if (files && files.length) {
-      upload(files[0])
-    }
+    if (files && files.length) upload(files[0])
   }
 
   const handleClick = () => {
@@ -49,10 +47,7 @@ const Upload = (props: types.ConfigProps) => {
     formData.set('file', file)
     const response = await UploadFile(formData)
     const { code, data, msg } = await response.json()
-    if (code !== 200) {
-      toast.error(msg)
-      return
-    }
+    if (code !== 200) return toast.error(msg)
     toast.success('文件上传成功')
     props.onFile(data)
   }

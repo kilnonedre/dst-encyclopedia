@@ -10,16 +10,12 @@ const mysqlAdminData = mysql.createPool({
 const dbQuery = function (sql: string, values?: Array<any>) {
   return new Promise((resolve, reject) => {
     mysqlAdminData.getConnection((err, connection) => {
-      if (err) {
-        reject(err)
-      } else {
+      if (err) reject(err)
+      else {
         connection.query(sql, values, (err, result) => {
           connection.release()
-          if (err) {
-            reject(err)
-          } else {
-            resolve(result)
-          }
+          if (err) reject(err)
+          else resolve(result)
         })
       }
     })
